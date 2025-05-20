@@ -15,11 +15,14 @@ public class HomeHandler implements HttpHandler {
         String filePath = "www/index.html";
         File file = new File(filePath);
         String text = Files.readString(file.toPath());
-        if (Math.random() > 0.5) {
+        if (Math.random() > 0.5 ) {
             text = text.replace("{{RESULT}}", "You lose!");
+            User.losses++ ;
         } else {
             text = text.replace("{{RESULT}}", "You win!");
+            User.wins++;
         }
+        text = text.replace("{{STATS}}","You have won " + User.wins + " total times, and lost " + User.losses + " times.");
         byte[] contents = text.getBytes();
 
         exchange.sendResponseHeaders(200, contents.length);
