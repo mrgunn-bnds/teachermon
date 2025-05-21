@@ -9,6 +9,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 
 public class HomeHandler implements HttpHandler {
+    private static User u = new User(1); // for now theres one static user
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         //System.out.println(exchange.getRequestURI().getPath());
@@ -17,12 +19,12 @@ public class HomeHandler implements HttpHandler {
         String text = Files.readString(file.toPath());
         if (Math.random() > 0.5 ) {
             text = text.replace("{{RESULT}}", "You lose!");
-            User.losses++ ;
+            u.addLoss();
         } else {
             text = text.replace("{{RESULT}}", "You win!");
-            User.wins++;
+            u.addWin();
         }
-        text = text.replace("{{STATS}}","You have won " + User.wins + " total times, and lost " + User.losses + " times.");
+        text = text.replace("{{STATS}}","You have won " + u.getWins() + " total times, and lost " + u.getLosses() + " times.");
         byte[] contents = text.getBytes();
 
         exchange.sendResponseHeaders(200, contents.length);
