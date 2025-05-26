@@ -10,11 +10,11 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.sql.SQLException;
 
-public class HomeHandler implements HttpHandler {
+public class BattleHandler implements HttpHandler {
     private final Dao<User,Integer> userDao;
     private final User user;
 
-    public HomeHandler(Dao<User,Integer> userDao) throws SQLException {
+    public BattleHandler(Dao<User,Integer> userDao) throws SQLException {
         this.userDao = userDao;
         this.user = userDao.queryForId(1);
     }
@@ -22,7 +22,7 @@ public class HomeHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         //System.out.println(exchange.getRequestURI().getPath());
-        String filePath = "www/index.html";
+        String filePath = "www/battle.html";
         File file = new File(filePath);
         String text = Files.readString(file.toPath());
         if (Math.random() > 0.5 ) {

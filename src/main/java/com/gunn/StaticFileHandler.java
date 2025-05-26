@@ -9,11 +9,14 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 
 public class StaticFileHandler implements HttpHandler {
+    private String filePath;
+
+    public StaticFileHandler(String filePath) {
+        this.filePath = filePath;
+    }
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        //System.out.println(exchange.getRequestURI().getPath());
-        String filePath = exchange.getRequestURI().getPath();
-        filePath = "www/" + filePath;
         File file = new File(filePath);
         byte[] contents = Files.readAllBytes(file.toPath());
 

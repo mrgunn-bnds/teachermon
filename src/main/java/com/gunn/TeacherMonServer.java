@@ -5,7 +5,9 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
+import org.h2.tools.Server;
 
 import java.net.InetSocketAddress;
 
@@ -15,6 +17,8 @@ public class TeacherMonServer {
         // this comes from: https://ormlite.com/
         // this uses h2, but you can change it to match your database
         String databaseUrl = "jdbc:h2:file:./database/teachermon.db";
+
+        Server.createWebServer("-trace").start();
 
         // create a connection source to our database
         ConnectionSource connectionSource =
@@ -26,21 +30,15 @@ public class TeacherMonServer {
         // if you need to create the 'user' table make this call
         TableUtils.createTableIfNotExists(connectionSource, User.class);
 
-        // Search for the user in the db with id 1
-        User user = userDao.queryForId(1);
-        if (user == null) {
-            // create our one and only user
-            user = new User(1);
-
-            // persist the account object to the database
-            userDao.create(user);
-        }
-
         // start the server
         HttpServer server = HttpServer.create(new InetSocketAddress(80),0);
-        server.createContext("/", new HomeHandler(userDao));
-        server.createContext("/favicon.ico", new StaticFileHandler());
-        server.createContext("/gunn.png", new StaticFileHandler());
+        HttpContext battleCtx = server.createContext("/battle", new BattleHandler(userDao));
+        battleCtx.setAuthenticator(new TeacherMonAuthenticator());
+        server.createContext("/",new StaticFileHandler("www/index.html"));
+        server.createContext("/new-user", new NewUserHandler(userDao));
+        server.createContext("/create-user", new StaticFileHandler("www/create-user.html"));
+        server.createContext("/favicon.ico", new StaticFileHandler("www/favicon.ico"));
+        server.createContext("/gunn.png", new StaticFileHandler("www/gunn.png"));
         server.setExecutor(null); // creates a default executor
         server.start();
 
