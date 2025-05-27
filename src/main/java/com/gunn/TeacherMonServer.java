@@ -33,9 +33,9 @@ public class TeacherMonServer {
         // start the server
         HttpServer server = HttpServer.create(new InetSocketAddress(80),0);
         HttpContext battleCtx = server.createContext("/battle", new BattleHandler(userDao));
-        battleCtx.setAuthenticator(new TeacherMonAuthenticator());
+        battleCtx.setAuthenticator(new TeacherMonAuthenticator(userDao));
         server.createContext("/",new StaticFileHandler("www/index.html"));
-        server.createContext("/new-user", new NewUserHandler(userDao));
+        server.createContext("/save-user", new SaveUserHandler(userDao));
         server.createContext("/create-user", new StaticFileHandler("www/create-user.html"));
         server.createContext("/favicon.ico", new StaticFileHandler("www/favicon.ico"));
         server.createContext("/gunn.png", new StaticFileHandler("www/gunn.png"));

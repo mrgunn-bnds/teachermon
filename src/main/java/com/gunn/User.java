@@ -6,12 +6,34 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "user")
 public class User {
     @DatabaseField(canBeNull = false)
-    public int wins;
+    private int wins;
     @DatabaseField(canBeNull = false)
-    public int losses;
+    private int losses;
 
-    @DatabaseField(id = true)
-    public int id; // for now just use id 1
+    @DatabaseField(generatedId = true)
+    private int id; // for now just use id 1
+
+    @DatabaseField(unique = true)
+    private String username;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @DatabaseField(canBeNull = false)
+    private String password;
 
     public User(int id) {
         this.id = id;
