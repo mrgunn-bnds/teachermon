@@ -16,6 +16,9 @@ public class User {
     @DatabaseField(unique = true)
     private String username;
 
+    @DatabaseField(canBeNull = false)
+    private String password;
+
     public String getUsername() {
         return username;
     }
@@ -31,9 +34,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
-    @DatabaseField(canBeNull = false)
-    private String password;
 
     public User(int id) {
         this.id = id;

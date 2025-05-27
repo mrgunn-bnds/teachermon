@@ -19,7 +19,7 @@ public class SaveUserHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         try {
-            User u = getUser(exchange);
+            User u = getUser(exchange); // converts the HTML form into a User model
             this.userDao.create(u);
 
             // redirect the user to battle page
