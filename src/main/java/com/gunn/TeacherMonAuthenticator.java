@@ -22,7 +22,7 @@ public class TeacherMonAuthenticator extends BasicAuthenticator {
                 System.out.println("MORE THAN ONE USER HAD THAT USERNAME!!!");
                 return false;
             }
-            return users.get(0).getPassword().equals(password);
+            return users.getFirst().getPassword().equals(password);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);

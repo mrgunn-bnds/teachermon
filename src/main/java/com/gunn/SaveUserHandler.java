@@ -6,11 +6,10 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.sql.SQLException;
 
 public class SaveUserHandler implements HttpHandler {
-    private Dao<User,Integer> userDao;
-    private Dao<Battle, Integer> battleDao; // every user has 1 battle
+    private final Dao<User,Integer> userDao;
+    private final Dao<Battle, Integer> battleDao; // every user has 1 battle
 
     public SaveUserHandler(Dao<User, Integer> userDao, Dao<Battle, Integer> battleDao) {
 

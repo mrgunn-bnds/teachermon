@@ -12,10 +12,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class TurnHandler implements HttpHandler {
-    private Dao<User,Integer> userDao;
-    private Dao<Battle, Integer> battleDao;
+    private final Dao<User,Integer> userDao;
+    private final Dao<Battle, Integer> battleDao;
 
-    public TurnHandler(Dao<User,Integer> userDao, Dao<Battle, Integer> battleDao) throws SQLException {
+    public TurnHandler(Dao<User,Integer> userDao, Dao<Battle, Integer> battleDao) {
         this.userDao = userDao;
         this.battleDao = battleDao;
     }
@@ -67,8 +67,7 @@ public class TurnHandler implements HttpHandler {
             String player = "Mr. Merwe";
             String enemy = "Mr. Gunn";
 
-            String log = b.getBattleLog();
-            log = "<p>" + player + " hit " + enemy + " for " + enemyDmg + " points of damage!</p>";
+            String log = "<p>" + player + " hit " + enemy + " for " + enemyDmg + " points of damage!</p>";
 
             // Did you win?
             if (b.getEnemyHP() < 0) {

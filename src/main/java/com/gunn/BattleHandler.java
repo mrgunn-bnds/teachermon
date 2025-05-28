@@ -3,7 +3,6 @@ package com.gunn;
 import com.j256.ormlite.dao.Dao;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpPrincipal;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +15,7 @@ public class BattleHandler implements HttpHandler {
     private final Dao<User,Integer> userDao;
     private final Dao<Battle,Integer> battleDao;
 
-    public BattleHandler(Dao<User,Integer> userDao, Dao<Battle,Integer> battleDao) throws SQLException {
+    public BattleHandler(Dao<User,Integer> userDao, Dao<Battle,Integer> battleDao) {
         this.userDao = userDao;
         this.battleDao = battleDao;
     }
@@ -77,8 +76,8 @@ public class BattleHandler implements HttpHandler {
             os.write(contents);
             os.close();
         } catch (SQLException e) {
-            showError(exchange, e.getMessage());
             e.printStackTrace();
+            showError(exchange, e.getMessage());
         }
     }
 }
