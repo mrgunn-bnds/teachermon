@@ -24,7 +24,7 @@ public class TeacherMonAuthenticator extends BasicAuthenticator {
             }
             return users.get(0).getPassword().equals(password);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

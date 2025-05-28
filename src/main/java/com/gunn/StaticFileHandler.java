@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 
 public class StaticFileHandler implements HttpHandler {
-    private String filePath;
+    protected String filePath;
 
     public StaticFileHandler(String filePath) {
         this.filePath = filePath;

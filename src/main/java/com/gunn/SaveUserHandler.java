@@ -4,9 +4,8 @@ import com.j256.ormlite.dao.Dao;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.file.Files;
 import java.sql.SQLException;
 
 public class SaveUserHandler implements HttpHandler {
@@ -17,6 +16,19 @@ public class SaveUserHandler implements HttpHandler {
 
         this.userDao = userDao;
         this.battleDao = battleDao;
+    }
+
+    private void showError(HttpExchange exchange, String message) throws IOException {
+        File file = new File("www/error.html");
+        String text = Files.readString(file.toPath());
+        text = text.replace("{{MESSAGE}}", message);
+        text = text.replace("{{OK_URL}}", "/create-user");
+        byte[] contents = text.getBytes();
+
+        exchange.sendResponseHeaders(200, contents.length);
+        OutputStream os = exchange.getResponseBody();
+        os.write(contents);
+        os.close();
     }
 
     @Override
@@ -31,9 +43,9 @@ public class SaveUserHandler implements HttpHandler {
             // redirect the user to battle page
             exchange.getResponseHeaders().add("Location","/battle");
             exchange.sendResponseHeaders(302, -1);
-        } catch (SQLException e) {
-            // TODO: show error to user
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError(exchange, e.getMessage());
         }
     }
 
@@ -49,6 +61,8 @@ public class SaveUserHandler implements HttpHandler {
                 newUser.setUsername(keyvalue[1]);
             } else if (keyvalue[0].equalsIgnoreCase("password")) {
                 newUser.setPassword(keyvalue[1]);
+            } else {
+                throw new IOException("unexpected keyvalue " + keyvalue[0]);
             }
         }
         return newUser;

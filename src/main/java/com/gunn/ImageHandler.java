@@ -8,16 +8,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
-public class ImageHandler implements HttpHandler {
+public class ImageHandler extends StaticFileHandler {
+    public ImageHandler() {
+        super("unknown_image_filepath");
+    }
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        String filePath = "www/"+ exchange.getRequestURI().getPath();
-        File file = new File(filePath);
-        byte[] contents = Files.readAllBytes(file.toPath());
-
-        exchange.sendResponseHeaders(200, contents.length);
-        OutputStream os = exchange.getResponseBody();
-        os.write(contents);
-        os.close();
+        this.filePath = "www/"+ exchange.getRequestURI().getPath();
+        super.handle(exchange);
     }
 }
