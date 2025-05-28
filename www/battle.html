@@ -16,7 +16,7 @@
 
             <!-- enemy info -->
             <div class="d-flex mb-3 align-items-center w-auto text-center">
-              <div class="bg-body-secondary w-100">Mr. Gunn HP 100/100 : LVL 1</div>
+              <div class="bg-body-secondary w-100">Mr. Gunn HP {{ENEMY_HP}}/100 : LVL 1</div>
               <img src="img/speech_bubble_corner_tl.png">
             </div>
 
@@ -36,7 +36,7 @@
 
           <div class="d-flex mb-3 align-items-center w-auto text-center">
             <img src="img/speech_bubble_corner_br.png">
-            <div class="bg-body-secondary w-100">Mr. Merwe 100/100 : LVL 1</div>
+            <div class="bg-body-secondary w-100">Mr. Merwe {{PLAYER_HP}}/100 : LVL 1</div>
           </div>
         </div>
       </div>
@@ -44,16 +44,17 @@
       <!-- battle log area -->
       <div class="row">
         <div class="col-12 text-center">
-          <p>{{USERNAME}}, You have encountered a wild Mr. Gunn!</p>
-          <p>{{RESULT}}</p>
-          <p>{{STATS}}</p>
+          {{BATTLE_LOG}}
         </div>
       </div>
 
       <!-- action buttons --->
       <div class="row flex-grow-1">
         <div class="col-12 border text-center">
-          <a class="btn btn-primary" role="button" href="/battle">Fight again!</a>
+          <form action="/turn" method="POST">
+            <input type="hidden" id="battleId" value="{{BATTLE_ID}}">
+            <input class="btn btn-primary" type="submit" value="Attack">
+          </form>
         </div>
       </div>
 

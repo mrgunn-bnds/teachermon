@@ -18,24 +18,28 @@ public class TeacherMonServer {
         // this uses h2, but you can change it to match your database
         String databaseUrl = "jdbc:h2:file:./database/teachermon.db";
 
-        Server.createWebServer("-trace").start();
+        Server.createWebServer().start();
 
         // create a connection source to our database
         ConnectionSource connectionSource =
                 new JdbcConnectionSource(databaseUrl);
 
-        // instantiate the DAO to handle User with integer id
+        // instantiate the DAO to handle Models with integer id primary keys
         Dao<User,Integer> userDao = DaoManager.createDao(connectionSource, User.class);
+        Dao<Battle, Integer> battleDao = DaoManager.createDao(connectionSource, Battle.class);
 
-        // if you need to create the 'user' table make this call
+        // if you need to create the model tables make this call
         TableUtils.createTableIfNotExists(connectionSource, User.class);
+        TableUtils.createTableIfNotExists(connectionSource, Battle.class);
 
         // start the server
         HttpServer server = HttpServer.create(new InetSocketAddress(80),0);
-        HttpContext battleCtx = server.createContext("/battle", new BattleHandler(userDao));
+        HttpContext battleCtx = server.createContext("/battle", new BattleHandler(userDao, battleDao));
         battleCtx.setAuthenticator(new TeacherMonAuthenticator(userDao));
+        HttpContext turnCtx = server.createContext("/turn", new TurnHandler(userDao, battleDao));
+        turnCtx.setAuthenticator(new TeacherMonAuthenticator(userDao));
         server.createContext("/",new StaticFileHandler("www/index.html"));
-        server.createContext("/save-user", new SaveUserHandler(userDao));
+        server.createContext("/save-user", new SaveUserHandler(userDao, battleDao));
         server.createContext("/create-user", new StaticFileHandler("www/create-user.html"));
         server.createContext("/favicon.ico", new StaticFileHandler("www/favicon.ico"));
         server.createContext("/img", new ImageHandler());

@@ -3,6 +3,7 @@ package com.gunn;
 import com.j256.ormlite.dao.Dao;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpPrincipal;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,32 +14,47 @@ import java.util.List;
 
 public class BattleHandler implements HttpHandler {
     private final Dao<User,Integer> userDao;
+    private final Dao<Battle,Integer> battleDao;
 
-    public BattleHandler(Dao<User,Integer> userDao) throws SQLException {
+    public BattleHandler(Dao<User,Integer> userDao, Dao<Battle,Integer> battleDao) throws SQLException {
         this.userDao = userDao;
+        this.battleDao = battleDao;
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         //System.out.println(exchange.getRequestURI().getPath());
         String filePath = "www/battle.html";
+        // Part of HTTP we can have a username.. using this to get the User
         String username = exchange.getPrincipal().getUsername();
         User user;
+        Battle battle;
         try {
             List<User> users = userDao.queryForEq("username", username);
+            // TODO: assert there is only 1
+
             user = users.getFirst();
+
+            // Create the battle object if it doesnt exist! (starting the battle)
+            List<Battle> battles = battleDao.queryForEq("userId", user.getId());
+            battle = battles.getFirst();
+
         } catch (SQLException e) {
+            // TODO: do proper error handling
             throw new RuntimeException(e);
         }
+
+        //
+
         File file = new File(filePath);
         String text = Files.readString(file.toPath());
-        if (Math.random() > 0.5 ) {
-            text = text.replace("{{RESULT}}", "You lose!");
-            user.addLoss();
-        } else {
-            text = text.replace("{{RESULT}}", "You win!");
-            user.addWin();
-        }
+
+        // show the battle log
+        text = text.replace("{{BATTLE_LOG}}", battle.getBattleLog());
+        text = text.replace("{{ENEMY_HP}}", "" + battle.getEnemyHP());
+        text = text.replace("{{PLAYER_HP}}", "" + battle.getPlayerHP());
+        text = text.replace("{{BATTLE_ID}}", "" + battle.getId());
+
         // show the username
         text = text.replace("{{USERNAME}}",username);
         // save results to database

@@ -11,9 +11,12 @@ import java.sql.SQLException;
 
 public class SaveUserHandler implements HttpHandler {
     private Dao<User,Integer> userDao;
+    private Dao<Battle, Integer> battleDao; // every user has 1 battle
 
-    public SaveUserHandler(Dao<User, Integer> userDao) {
+    public SaveUserHandler(Dao<User, Integer> userDao, Dao<Battle, Integer> battleDao) {
+
         this.userDao = userDao;
+        this.battleDao = battleDao;
     }
 
     @Override
@@ -21,6 +24,9 @@ public class SaveUserHandler implements HttpHandler {
         try {
             User u = getUser(exchange); // converts the HTML form into a User model
             this.userDao.create(u);
+            // Every user starts in battle
+            Battle b = new Battle(u.getId());
+            this.battleDao.create(b);
 
             // redirect the user to battle page
             exchange.getResponseHeaders().add("Location","/battle");

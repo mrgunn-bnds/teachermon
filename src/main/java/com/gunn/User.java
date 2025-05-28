@@ -10,6 +10,10 @@ public class User {
     @DatabaseField(canBeNull = false)
     private int losses;
 
+    public int getId() {
+        return id;
+    }
+
     @DatabaseField(generatedId = true)
     private int id; // the db automatically manages the id's!
 
