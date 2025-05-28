@@ -38,7 +38,7 @@ public class TeacherMonServer {
         server.createContext("/save-user", new SaveUserHandler(userDao));
         server.createContext("/create-user", new StaticFileHandler("www/create-user.html"));
         server.createContext("/favicon.ico", new StaticFileHandler("www/favicon.ico"));
-        server.createContext("/gunn.png", new StaticFileHandler("www/gunn.png"));
+        server.createContext("/img", new ImageHandler());
         server.setExecutor(null); // creates a default executor
         server.start();
 

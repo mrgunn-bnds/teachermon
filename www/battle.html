@@ -8,19 +8,56 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
 </head>
 <body>
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-  <div class="card text-center" style="width: 100%; max-width: 400px;">
-    <div class="card-body">
-      <h2 class="card-title">TeacherMon Fight</h2>
-      <p class="card-text"><img alt="Mr. Gunn" src="gunn.png"/>
-      <p>{{USERNAME}}, You have encountered a wild Mr. Gunn!</p>
-      <p>{{RESULT}}</p>
-      <p>{{STATS}}</p>
-      <a class="btn btn-primary" role="button" aria-disabled="true" href="/battle">Fight again!</a>
-    </div>
-  </div>
-</div>
+    <div class="container-fluid">
+      <!-- Top area (main content) -->
+      <div class="row">
+        <!-- left column -->
+        <div class="col-6">
 
+            <!-- enemy info -->
+            <div class="d-flex mb-3 align-items-center w-auto text-center">
+              <div class="bg-body-secondary w-100">Mr. Gunn HP 100/100 : LVL 1</div>
+              <img src="img/speech_bubble_corner_tl.png">
+            </div>
+
+          <!-- my fighter png -->
+          <div class="text-center">
+              <img alt="Mr. Merwe" src="img/merwe.png"/>
+          </div>
+        </div>
+
+        <!-- right column -->
+        <div class="col-6">
+
+          <!-- enemy fighter png -->
+          <div class="text-center">
+            <img alt="Mr. Gunn" src="img/gunn.png"/>
+          </div>
+
+          <div class="d-flex mb-3 align-items-center w-auto text-center">
+            <img src="img/speech_bubble_corner_br.png">
+            <div class="bg-body-secondary w-100">Mr. Merwe 100/100 : LVL 1</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- battle log area -->
+      <div class="row">
+        <div class="col-12 text-center">
+          <p>{{USERNAME}}, You have encountered a wild Mr. Gunn!</p>
+          <p>{{RESULT}}</p>
+          <p>{{STATS}}</p>
+        </div>
+      </div>
+
+      <!-- action buttons --->
+      <div class="row flex-grow-1">
+        <div class="col-12 border text-center">
+          <a class="btn btn-primary" role="button" href="/battle">Fight again!</a>
+        </div>
+      </div>
+
+    </div>
 
 
 </body>

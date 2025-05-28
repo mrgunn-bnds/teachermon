@@ -11,7 +11,7 @@ public class User {
     private int losses;
 
     @DatabaseField(generatedId = true)
-    private int id; // for now just use id 1
+    private int id; // the db automatically manages the id's!
 
     @DatabaseField(unique = true)
     private String username;

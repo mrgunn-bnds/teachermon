@@ -33,6 +33,7 @@ public class SaveUserHandler implements HttpHandler {
 
     private static User getUser(HttpExchange exchange) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(exchange.getRequestBody()));
+        // username=abc&password=def
         User newUser = new User();
         String query = br.readLine();
         String[] vars = query.split("&");
