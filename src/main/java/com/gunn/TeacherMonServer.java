@@ -1,9 +1,6 @@
 package com.gunn;
 
-import com.gunn.handlers.BattleHandler;
-import com.gunn.handlers.ImageHandler;
-import com.gunn.handlers.SaveUserHandler;
-import com.gunn.handlers.StaticFileHandler;
+import com.gunn.handlers.*;
 import com.gunn.models.User;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
