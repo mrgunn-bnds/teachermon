@@ -3,11 +3,9 @@ package com.gunn.handlers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
 
 public class StaticFileHandler implements HttpHandler {
     protected String filePath;

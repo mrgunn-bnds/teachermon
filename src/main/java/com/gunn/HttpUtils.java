@@ -2,12 +2,10 @@ package com.gunn;
 
 import com.sun.net.httpserver.HttpExchange;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 
 public class HttpUtils {
     public static void showError(HttpExchange exchange, String message) throws IOException {
