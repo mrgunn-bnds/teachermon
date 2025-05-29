@@ -1,5 +1,7 @@
 package com.gunn;
 
+import com.gunn.models.Battle;
+import com.gunn.models.User;
 import com.j256.ormlite.dao.Dao;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -11,27 +13,24 @@ import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ *
+ */
 public class TurnHandler implements HttpHandler {
     private final Dao<User,Integer> userDao;
     private final Dao<Battle, Integer> battleDao;
 
+    /**
+     *
+     * @param userDao
+     * @param battleDao
+     */
     public TurnHandler(Dao<User,Integer> userDao, Dao<Battle, Integer> battleDao) {
         this.userDao = userDao;
         this.battleDao = battleDao;
     }
 
-    private void showError(HttpExchange exchange, String message) throws IOException {
-        File file = new File("www/error.html");
-        String text = Files.readString(file.toPath());
-        text = text.replace("{{MESSAGE}}", message);
-        text = text.replace("{{OK_URL}}", "/battle");
-        byte[] contents = text.getBytes();
 
-        exchange.sendResponseHeaders(200, contents.length);
-        OutputStream os = exchange.getResponseBody();
-        os.write(contents);
-        os.close();
-    }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -43,7 +42,7 @@ public class TurnHandler implements HttpHandler {
         User user;
         Battle b;
         try {
-            List<User> users = userDao.queryForEq("username", username);
+            List<User> users = userDao.queryForEq(User.USERNAME_FIELD, username);
             // TODO: assert there is only 1
 
             user = users.getFirst();
@@ -98,11 +97,11 @@ public class TurnHandler implements HttpHandler {
             battleDao.update(b);
 
             // redirect the user to battle page
-            exchange.getResponseHeaders().add("Location", "/battle");
+            exchange.getResponseHeaders().add("Location", Routes.BATTLE);
             exchange.sendResponseHeaders(302, -1);
         } catch (SQLException e) {
             e.printStackTrace();
-            showError(exchange, e.getMessage());
+            HttpUtils.showError(exchange, e.getMessage());
         }
     }
 }

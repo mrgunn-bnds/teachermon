@@ -1,5 +1,6 @@
 package com.gunn;
 
+import com.gunn.models.User;
 import com.j256.ormlite.dao.Dao;
 import com.sun.net.httpserver.BasicAuthenticator;
 
@@ -17,12 +18,12 @@ public class TeacherMonAuthenticator extends BasicAuthenticator {
     @Override
     public boolean checkCredentials(String username, String password) {
         try {
-            List<User> users = userDao.queryForEq("username",username);
+            List<User> users = userDao.queryForEq(User.USERNAME_FIELD,username);
             if (users.size() != 1) {
                 System.out.println("MORE THAN ONE USER HAD THAT USERNAME!!!");
                 return false;
             }
-            return users.getFirst().getPassword().equals(password);
+            return users.getFirst().hasPassword(password);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);

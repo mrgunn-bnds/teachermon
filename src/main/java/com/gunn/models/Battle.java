@@ -1,8 +1,11 @@
-package com.gunn;
+package com.gunn.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+/**
+ *
+ */
 @DatabaseTable(tableName = "battle")
 public class Battle {
     @DatabaseField(generatedId = true)
@@ -10,6 +13,8 @@ public class Battle {
 
     @DatabaseField
     private int userId;
+
+    public static final String USERID_FIELD = "userId";
 
     @DatabaseField
     private int playerHP;  // merwe
@@ -20,7 +25,7 @@ public class Battle {
     @DatabaseField
     private String battleLog; // newline seperated list of all actions
 
-    // default constructer : requirement of ORMLite
+
     public Battle() {
 
     }
@@ -29,6 +34,11 @@ public class Battle {
         return playerHP;
     }
 
+    /**
+     * this method allows you to change the value of the players hitpoints.
+     *
+     * @param playerHP the new hitpoints of the player
+     */
     public void setPlayerHP(int playerHP) {
         this.playerHP = playerHP;
     }
@@ -37,6 +47,10 @@ public class Battle {
         return enemyHP;
     }
 
+    /**
+     *
+     * @param enemyHP
+     */
     public void setEnemyHP(int enemyHP) {
         this.enemyHP = enemyHP;
     }

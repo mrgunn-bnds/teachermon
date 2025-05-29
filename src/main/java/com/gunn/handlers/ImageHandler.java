@@ -1,5 +1,6 @@
-package com.gunn;
+package com.gunn.handlers;
 
+import com.gunn.FilePaths;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 
@@ -11,7 +12,7 @@ public class ImageHandler extends StaticFileHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        this.filePath = "www/"+ exchange.getRequestURI().getPath();
+        this.filePath = FilePaths.WWW_ROOT + exchange.getRequestURI().getPath();
         super.handle(exchange);
     }
 }

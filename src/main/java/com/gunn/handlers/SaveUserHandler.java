@@ -1,11 +1,16 @@
-package com.gunn;
+package com.gunn.handlers;
 
+import com.gunn.Routes;
+import com.gunn.models.Battle;
+import com.gunn.models.User;
 import com.j256.ormlite.dao.Dao;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.*;
 import java.nio.file.Files;
+
+import static com.gunn.HttpUtils.showError;
 
 public class SaveUserHandler implements HttpHandler {
     private final Dao<User,Integer> userDao;
@@ -15,19 +20,6 @@ public class SaveUserHandler implements HttpHandler {
 
         this.userDao = userDao;
         this.battleDao = battleDao;
-    }
-
-    private void showError(HttpExchange exchange, String message) throws IOException {
-        File file = new File("www/error.html");
-        String text = Files.readString(file.toPath());
-        text = text.replace("{{MESSAGE}}", message);
-        text = text.replace("{{OK_URL}}", "/create-user");
-        byte[] contents = text.getBytes();
-
-        exchange.sendResponseHeaders(200, contents.length);
-        OutputStream os = exchange.getResponseBody();
-        os.write(contents);
-        os.close();
     }
 
     @Override
@@ -40,7 +32,7 @@ public class SaveUserHandler implements HttpHandler {
             this.battleDao.create(b);
 
             // redirect the user to battle page
-            exchange.getResponseHeaders().add("Location","/battle");
+            exchange.getResponseHeaders().add("Location", Routes.BATTLE);
             exchange.sendResponseHeaders(302, -1);
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,10 +1,11 @@
-package com.gunn;
+package com.gunn.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
@@ -17,8 +18,8 @@ public class StaticFileHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        File file = new File(filePath);
-        byte[] contents = Files.readAllBytes(file.toPath());
+        InputStream in = getClass().getResourceAsStream(filePath);
+        byte[] contents = in.readAllBytes();
 
         exchange.sendResponseHeaders(200, contents.length);
         OutputStream os = exchange.getResponseBody();
