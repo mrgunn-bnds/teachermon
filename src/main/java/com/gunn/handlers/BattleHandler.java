@@ -1,7 +1,7 @@
 package com.gunn.handlers;
 
 import com.gunn.FilePaths;
-import com.gunn.Teacher;
+import com.gunn.models.Teacher;
 import com.gunn.TeacherRepository;
 import com.gunn.Templates;
 import com.gunn.models.Battle;

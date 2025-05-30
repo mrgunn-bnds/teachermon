@@ -1,4 +1,4 @@
-package com.gunn;
+package com.gunn.models;
 
 /**
  * A Teacher is used to store Teacher information such as name and image filepath (img)

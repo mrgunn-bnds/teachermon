@@ -1,7 +1,8 @@
 package com.gunn.handlers;
 
 import com.gunn.Routes;
-import com.gunn.Teacher;
+import com.gunn.Templates;
+import com.gunn.models.Teacher;
 import com.gunn.TeacherRepository;
 import com.gunn.models.Battle;
 import com.gunn.models.User;
@@ -34,10 +35,15 @@ public class SaveUserHandler implements HttpHandler {
             Battle b = new Battle(u.getId());
 
             // shuffle the competitors
+            //TODO: this logic is copied from TurnHandler, probably should have done this better.
             Teacher newPlayer = teacherRepo.getRandomTeacher();
             Teacher newEnemy = teacherRepo.getRandomOpponent(newPlayer);
             b.setPlayerID(newPlayer.getId());
             b.setEnemyID(newEnemy.getId());
+            String log = "<p>A wild {{ENEMY_NAME}} arrives. {{PLAYER_NAME}} will fight!</p>"
+                    .replace(Templates.PLAYER_NAME, newPlayer.getName())
+                    .replace(Templates.ENEMY_NAME, newEnemy.getName());
+            b.setBattleLog(log);
 
             b.setEnemyHP(100);
             b.setPlayerHP(100);

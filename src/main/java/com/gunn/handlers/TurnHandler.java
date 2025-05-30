@@ -2,6 +2,7 @@ package com.gunn.handlers;
 
 import com.gunn.*;
 import com.gunn.models.Battle;
+import com.gunn.models.Teacher;
 import com.gunn.models.User;
 import com.j256.ormlite.dao.Dao;
 import com.sun.net.httpserver.HttpExchange;
