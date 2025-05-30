@@ -1,7 +1,11 @@
 package com.gunn.models;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+// TODO: this isnt ideal
+import static com.gunn.TeacherMonServer.teachers;
 
 /**
  *
@@ -22,7 +26,31 @@ public class Battle {
     @DatabaseField
     private int enemyHP;  // gunn
 
+    // which teacher is player using
     @DatabaseField
+    private int playerID;
+
+    public int getPlayerID() {
+        return playerID;
+    }
+
+    public void setPlayerID(int playerID) {
+        this.playerID = playerID;
+    }
+
+    public int getEnemyID() {
+        return enemyID;
+    }
+
+    public void setEnemyID(int enemyID) {
+        this.enemyID = enemyID;
+    }
+
+    // which teacher is enemy
+    @DatabaseField
+    private int enemyID;
+
+    @DatabaseField(dataType = DataType.LONG_STRING)
     private String battleLog; // newline seperated list of all actions
 
 
@@ -73,6 +101,19 @@ public class Battle {
         this.playerHP = 100;
         this.enemyHP = 100;
         // TODO: this should be pulled from a character class
-        this.battleLog = "<p>You have encountered a wild Mr. Gunn!</p>";
+        this.battleLog = "";
+        startNew();
+    }
+
+    public void startNew() {
+        this.setPlayerID((int) (Math.random()*teachers.length));
+        this.setEnemyID((int) (Math.random()*teachers.length));
+        if (this.getEnemyID()==this.getPlayerID()) {
+            this.setEnemyID((this.getPlayerID()+1)% teachers.length);
+        }
+        String player = teachers[this.getPlayerID()].getName();
+        String enemy = teachers[this.getEnemyID()].getName();
+
+        this.battleLog += "<p>A wild " + enemy + " arrives. " + player + " will fight!</p>";
     }
 }

@@ -1,6 +1,7 @@
 package com.gunn.handlers;
 
 import com.gunn.FilePaths;
+import com.gunn.Teacher;
 import com.gunn.Templates;
 import com.gunn.models.Battle;
 import com.gunn.models.User;
@@ -33,6 +34,7 @@ import static com.gunn.HttpUtils.showError;
 public class BattleHandler implements HttpHandler {
     private final Dao<User,Integer> userDao;
     private final Dao<com.gunn.models.Battle,Integer> battleDao;
+    private final Teacher[] teachers;
 
     /**
      * Initialize the BattleHandler object.
@@ -42,9 +44,10 @@ public class BattleHandler implements HttpHandler {
      *
      * @see Dao
      */
-    public BattleHandler(Dao<User,Integer> userDao, Dao<com.gunn.models.Battle,Integer> battleDao) {
+    public BattleHandler(Dao<User,Integer> userDao, Dao<com.gunn.models.Battle,Integer> battleDao, Teacher[] teachers) {
         this.userDao = userDao;
         this.battleDao = battleDao;
+        this.teachers = teachers;
     }
 
     /**
@@ -83,6 +86,10 @@ public class BattleHandler implements HttpHandler {
             text = text.replace(Templates.ENEMY_HP, "" + battle.getEnemyHP());
             text = text.replace(Templates.PLAYER_HP, "" + battle.getPlayerHP());
             text = text.replace(Templates.BATTLE_ID, "" + battle.getId());
+            text = text.replace(Templates.PLAYER_IMG, teachers[battle.getPlayerID()].getImg());
+            text = text.replace(Templates.PLAYER_NAME, teachers[battle.getPlayerID()].getName());
+            text = text.replace(Templates.ENEMY_IMG, teachers[battle.getEnemyID()].getImg());
+            text = text.replace(Templates.ENEMY_NAME, teachers[battle.getEnemyID()].getName());
 
             // show the username
             text = text.replace(Templates.USERNAME, username);

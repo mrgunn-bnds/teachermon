@@ -28,6 +28,8 @@ public class SaveUserHandler implements HttpHandler {
             this.userDao.create(u);
             // Every user starts in battle
             Battle b = new Battle(u.getId());
+            // TODO: shuffle opponents here
+
             this.battleDao.create(b);
 
             // redirect the user to battle page
