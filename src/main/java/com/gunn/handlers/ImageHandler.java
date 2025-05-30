@@ -13,6 +13,8 @@ public class ImageHandler extends StaticFileHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         this.filePath = FilePaths.WWW_ROOT + exchange.getRequestURI().getPath();
+        this.filePath = filePath.replace("//","/"); // quickly fix a bug where URI paths are getting a "/" prefix
+        System.out.println("The image filepath is " + filePath);
         super.handle(exchange);
     }
 }
