@@ -1,6 +1,8 @@
 package com.gunn.handlers;
 
 import com.gunn.Routes;
+import com.gunn.Teacher;
+import com.gunn.TeacherRepository;
 import com.gunn.models.Battle;
 import com.gunn.models.User;
 import com.j256.ormlite.dao.Dao;
@@ -14,11 +16,13 @@ import static com.gunn.HttpUtils.showError;
 public class SaveUserHandler implements HttpHandler {
     private final Dao<User,Integer> userDao;
     private final Dao<Battle, Integer> battleDao; // every user has 1 battle
+    private final TeacherRepository teacherRepo;
 
-    public SaveUserHandler(Dao<User, Integer> userDao, Dao<Battle, Integer> battleDao) {
+    public SaveUserHandler(Dao<User, Integer> userDao, Dao<Battle, Integer> battleDao, TeacherRepository teacherRepo) {
 
         this.userDao = userDao;
         this.battleDao = battleDao;
+        this.teacherRepo = teacherRepo;
     }
 
     @Override
@@ -28,7 +32,15 @@ public class SaveUserHandler implements HttpHandler {
             this.userDao.create(u);
             // Every user starts in battle
             Battle b = new Battle(u.getId());
-            // TODO: shuffle opponents here
+
+            // shuffle the competitors
+            Teacher newPlayer = teacherRepo.getRandomTeacher();
+            Teacher newEnemy = teacherRepo.getRandomOpponent(newPlayer);
+            b.setPlayerID(newPlayer.getId());
+            b.setEnemyID(newEnemy.getId());
+
+            b.setEnemyHP(100);
+            b.setPlayerHP(100);
 
             this.battleDao.create(b);
 

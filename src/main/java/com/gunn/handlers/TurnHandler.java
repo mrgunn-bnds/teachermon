@@ -1,8 +1,6 @@
 package com.gunn.handlers;
 
-import com.gunn.HttpUtils;
-import com.gunn.Routes;
-import com.gunn.Teacher;
+import com.gunn.*;
 import com.gunn.models.Battle;
 import com.gunn.models.User;
 import com.j256.ormlite.dao.Dao;
@@ -12,8 +10,6 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Random;
-import java.util.random.RandomGenerator;
 
 /**
  *
@@ -21,17 +17,17 @@ import java.util.random.RandomGenerator;
 public class TurnHandler implements HttpHandler {
     private final Dao<User,Integer> userDao;
     private final Dao<Battle, Integer> battleDao;
-    private final Teacher[] teachers;
+    private final TeacherRepository teacherRepo;
 
     /**
      *
      * @param userDao
      * @param battleDao
      */
-    public TurnHandler(Dao<User,Integer> userDao, Dao<Battle, Integer> battleDao, Teacher[] teachers) {
+    public TurnHandler(Dao<User,Integer> userDao, Dao<Battle, Integer> battleDao, TeacherRepository teacherRepo) {
         this.userDao = userDao;
         this.battleDao = battleDao;
-        this.teachers = teachers;
+        this.teacherRepo = teacherRepo;
     }
 
 
@@ -46,12 +42,10 @@ public class TurnHandler implements HttpHandler {
         User user;
         Battle b;
         try {
+            // Get the user (logged in), and the associated battle
             List<User> users = userDao.queryForEq(User.USERNAME_FIELD, username);
-            // TODO: assert there is only 1
-
             user = users.getFirst();
 
-            // Create the battle object if it doesnt exist! (starting the battle)
             List<Battle> battles = battleDao.queryForEq("userId", user.getId());
             b = battles.getFirst();
 
@@ -66,39 +60,53 @@ public class TurnHandler implements HttpHandler {
             b.setPlayerHP(b.getPlayerHP() - playerDmg);
 
             // update the log
-            // Get player names TODO: from some db
-            String player = teachers[b.getPlayerID()].getName();
-            String enemy = teachers[b.getEnemyID()].getName();
+            Teacher player = teacherRepo.getById(b.getPlayerID());
+            Teacher enemy = teacherRepo.getById(b.getEnemyID());
 
-            String log = "<p>" + player + " hit " + enemy + " for " + enemyDmg + " points of damage!</p>";
+            String log = "<p>{{PLAYER_NAME}} hit {{ENEMY_NAME}} for {{ENEMY_DMG}} points of damage!</p>";
+
             boolean battleOver = false;
             // Did you win?
             if (b.getEnemyHP() <= 0) {
-                log += "<p>" + player + " defeated " + enemy + "!</p>";
-                log += "<p>After some time.." + enemy + " awakes refreshed!</p>";
+                log += "<p>{{PLAYER_NAME}} defeated {{ENEMY_NAME}}!</p>" +
+                        "<p>After some time..{{ENEMY_NAME}} awakes refreshed!</p>";
                 user.addWin();
                 battleOver = true;
 
             } else {
-                log += "<p>" + enemy + " hit " + player + " for " + playerDmg + " points of damage!</p>";
+                log += "<p>{{ENEMY_NAME}} hit {{PLAYER_NAME}} for {{PLAYER_DMG}} points of damage!</p>";
                 // you lost
                 if (b.getPlayerHP() <= 0) {
-                    log += "<p>" + enemy + " defeated " + player + "!</p>";
-                    log += "<p>After some time.." + player + " awakes refreshed!</p>";
+                    log += "<p>{{ENEMY_NAME}} defeated {{PLAYER_NAME}}!</p>" +
+                            "<p>After some time..{{PLAYER_NAME}} awakes refreshed!</p>";
                     user.addLoss();
                     battleOver = true;
                 }
             }
-            b.setBattleLog(log);
+
+            // replace templates with real values
+            log = log.replace(Templates.PLAYER_NAME, player.getName())
+                    .replace(Templates.PLAYER_DMG, "" + playerDmg)
+                    .replace(Templates.ENEMY_NAME, enemy.getName())
+                    .replace(Templates.ENEMY_DMG, "" + enemyDmg);
 
             if (battleOver) {
-                // Randomize player & enemy
-                b.startNew();
+                // save the results of the fight
+                userDao.update(user);
 
+                // Randomize player & enemy
+                Teacher newPlayer = teacherRepo.getRandomTeacher();
+                Teacher newEnemy = teacherRepo.getRandomOpponent(newPlayer);
+                b.setPlayerID(newPlayer.getId());
+                b.setEnemyID(newEnemy.getId());
                 b.setEnemyHP(100);
                 b.setPlayerHP(100);
-                userDao.update(user); // save the result
+
+                log += "<p>A wild {{ENEMY_NAME}} arrives. {{PLAYER_NAME}} will fight!</p>"
+                        .replace(Templates.PLAYER_NAME, newPlayer.getName())
+                        .replace(Templates.ENEMY_NAME, newEnemy.getName());
             }
+            b.setBattleLog(log);
 
             // save the results to the db
             battleDao.update(b);

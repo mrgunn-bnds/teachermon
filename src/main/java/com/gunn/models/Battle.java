@@ -4,9 +4,6 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-// TODO: this isnt ideal
-import static com.gunn.TeacherMonServer.teachers;
-
 /**
  *
  */
@@ -100,20 +97,6 @@ public class Battle {
         // TODO: we should get this from the characters table
         this.playerHP = 100;
         this.enemyHP = 100;
-        // TODO: this should be pulled from a character class
         this.battleLog = "";
-        startNew();
-    }
-
-    public void startNew() {
-        this.setPlayerID((int) (Math.random()*teachers.length));
-        this.setEnemyID((int) (Math.random()*teachers.length));
-        if (this.getEnemyID()==this.getPlayerID()) {
-            this.setEnemyID((this.getPlayerID()+1)% teachers.length);
-        }
-        String player = teachers[this.getPlayerID()].getName();
-        String enemy = teachers[this.getEnemyID()].getName();
-
-        this.battleLog += "<p>A wild " + enemy + " arrives. " + player + " will fight!</p>";
     }
 }

@@ -15,4 +15,6 @@ public class Templates {
     public static final String PLAYER_IMG = "{{PLAYER_IMG}}";
     public static final String ENEMY_NAME = "{{ENEMY_NAME}}";
     public static final String ENEMY_IMG = "{{ENEMY_IMG}}";
+    public static final String ENEMY_DMG = "{{ENEMY_DMG}}";
+    public static final String PLAYER_DMG = "{{PLAYER_DMG}}";
 }

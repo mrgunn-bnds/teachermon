@@ -12,14 +12,9 @@ import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 import org.h2.tools.Server;
 
-import java.io.File;
-import java.io.InputStream;
 import java.net.InetSocketAddress;
-import java.util.Arrays;
 
 public class TeacherMonServer {
-    //TODO: how can i get this from Battle?
-    public static Teacher[] teachers = null;
 
     public static void main(String[] args)  {
         // set up the db connection
@@ -34,10 +29,8 @@ public class TeacherMonServer {
             ConnectionSource connectionSource =
                     new JdbcConnectionSource(databaseUrl);
 
-            // get the db of teachers
-            ObjectMapper mapper = new ObjectMapper();
-            InputStream is = TeacherMonServer.class.getResourceAsStream("/data/teachers.json");
-            teachers = mapper.readValue(is, Teacher[].class);
+            // A repository of teachers
+            TeacherRepository teacherRepo = TeacherRepository.getInstance();
 
             // instantiate the DAO to handle Models with integer id primary keys
             Dao<User,Integer> userDao = DaoManager.createDao(connectionSource, User.class);
@@ -51,12 +44,12 @@ public class TeacherMonServer {
 
             // start the server
             HttpServer server = HttpServer.create(new InetSocketAddress(80),0);
-            HttpContext battleCtx = server.createContext(Routes.BATTLE, new BattleHandler(userDao, battleDao, teachers));
+            HttpContext battleCtx = server.createContext(Routes.BATTLE, new BattleHandler(userDao, battleDao, teacherRepo));
             battleCtx.setAuthenticator(new TeacherMonAuthenticator(userDao));
-            HttpContext turnCtx = server.createContext(Routes.TURN, new TurnHandler(userDao, battleDao, teachers));
+            HttpContext turnCtx = server.createContext(Routes.TURN, new TurnHandler(userDao, battleDao, teacherRepo));
             turnCtx.setAuthenticator(new TeacherMonAuthenticator(userDao));
             server.createContext(Routes.ROOT,new StaticFileHandler(FilePaths.INDEX));
-            server.createContext(Routes.SAVE_USER, new SaveUserHandler(userDao, battleDao));
+            server.createContext(Routes.SAVE_USER, new SaveUserHandler(userDao, battleDao, teacherRepo));
             server.createContext(Routes.CREATE_USER, new StaticFileHandler(FilePaths.CREATE_USER));
             server.createContext(Routes.FAV_ICO, new StaticFileHandler(FilePaths.FAV_ICON));
             server.createContext(Routes.IMG, new ImageHandler());

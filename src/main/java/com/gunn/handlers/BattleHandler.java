@@ -2,6 +2,7 @@ package com.gunn.handlers;
 
 import com.gunn.FilePaths;
 import com.gunn.Teacher;
+import com.gunn.TeacherRepository;
 import com.gunn.Templates;
 import com.gunn.models.Battle;
 import com.gunn.models.User;
@@ -34,7 +35,7 @@ import static com.gunn.HttpUtils.showError;
 public class BattleHandler implements HttpHandler {
     private final Dao<User,Integer> userDao;
     private final Dao<com.gunn.models.Battle,Integer> battleDao;
-    private final Teacher[] teachers;
+    private final TeacherRepository teacherRepo;
 
     /**
      * Initialize the BattleHandler object.
@@ -44,10 +45,10 @@ public class BattleHandler implements HttpHandler {
      *
      * @see Dao
      */
-    public BattleHandler(Dao<User,Integer> userDao, Dao<com.gunn.models.Battle,Integer> battleDao, Teacher[] teachers) {
+    public BattleHandler(Dao<User,Integer> userDao, Dao<com.gunn.models.Battle,Integer> battleDao, TeacherRepository teacherRepo) {
         this.userDao = userDao;
         this.battleDao = battleDao;
-        this.teachers = teachers;
+        this.teacherRepo = teacherRepo;
     }
 
     /**
@@ -81,20 +82,27 @@ public class BattleHandler implements HttpHandler {
             InputStream in = getClass().getResourceAsStream(FilePaths.BATTLE);
             String text = new String(in.readAllBytes(), StandardCharsets.UTF_8);
 
+            // determine the player/enemies and display their info
+            Teacher player = teacherRepo.getById(battle.getPlayerID());
+            Teacher enemy = teacherRepo.getById(battle.getEnemyID());
+            text = text.replace(Templates.PLAYER_IMG, player.getImg())
+                    .replace(Templates.PLAYER_NAME, player.getName())
+                    .replace(Templates.ENEMY_IMG, enemy.getImg())
+                    .replace(Templates.ENEMY_NAME, enemy.getName());
+
             // show the battle log
             text = text.replace(Templates.BATTLE_LOG, battle.getBattleLog());
-            text = text.replace(Templates.ENEMY_HP, "" + battle.getEnemyHP());
-            text = text.replace(Templates.PLAYER_HP, "" + battle.getPlayerHP());
+
+            // show hp stats
+            text = text.replace(Templates.ENEMY_HP, "" + battle.getEnemyHP())
+                    .replace(Templates.PLAYER_HP, "" + battle.getPlayerHP());
+
+            // make form submit correctly
             text = text.replace(Templates.BATTLE_ID, "" + battle.getId());
-            text = text.replace(Templates.PLAYER_IMG, teachers[battle.getPlayerID()].getImg());
-            text = text.replace(Templates.PLAYER_NAME, teachers[battle.getPlayerID()].getName());
-            text = text.replace(Templates.ENEMY_IMG, teachers[battle.getEnemyID()].getImg());
-            text = text.replace(Templates.ENEMY_NAME, teachers[battle.getEnemyID()].getName());
 
             // show the username
             text = text.replace(Templates.USERNAME, username);
-            // save results to database
-            this.userDao.update(user);
+
 
             byte[] contents = text.getBytes();
 
